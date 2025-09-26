@@ -80,26 +80,68 @@ pip install -e .
 
 ## Running tests
 
+The project now includes a comprehensive CI setup that ensures 100% test coverage and code quality.
+
+### Quick Commands (using Makefile)
+
 ```zsh
-pytest
+# Install all dependencies (including dev tools)
+make install
+
+# Run all CI checks locally (same as GitHub Actions)
+make ci-check
+
+# Run just the tests with coverage
+make test
+
+# Run just pylint
+make lint
+
+# Format code automatically
+make format
+
+# Check formatting without changing files
+make check-format
+
+# Check import sorting without changing files
+make check-imports
 ```
+
+### Manual Commands
+
+```zsh
+# Run tests with coverage (must be 100%)
+pytest --cov=src --cov-report=term-missing --cov-fail-under=100
+
+# Run pylint
+pylint src/ tests/ --fail-under=8.0
+
+# Check code formatting
+black --check --diff src/ tests/
+
+# Check import sorting
+isort --check-only --diff src/ tests/
+```
+
+### CI Integration
+
+The project includes GitHub Actions that run on:
+- All pull requests to main
+- All pushes to main
+
+The CI runs the exact same checks as `make ci-check`, ensuring consistency between local development and CI.
 
 Pytest configuration highlights (`pytest.ini`):
 - `testpaths = tests` ensures tests live under `tests/`
 - `python_files = test_*.py *_test.py` keeps test filenames consistent
-- `-ra -q` gives concise output while still showing summary of skipped/xfailed
+- `--cov-fail-under=100` enforces 100% test coverage
+- `--pylint` runs pylint as part of the test suite
 
 Tips:
+- Always run `make ci-check` before pushing to ensure CI will pass
 - Run a subset: `pytest -k addition`
 - Stop on first failure: `pytest -x`
 - Show print statements: `pytest -s`
-
-Coverage (optional but encouraged):
-
-```zsh
-pip install pytest-cov
-pytest --cov=src --cov-report=term-missing
-```
 
 ## Linting with pylint
 
